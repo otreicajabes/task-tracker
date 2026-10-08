@@ -1,0 +1,24 @@
+{
+  "name": "task-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test:unit": "jest tests/unit.test.js",
+    "test:ui": "jest tests/ui.test.js --testTimeout=30000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "jest-junit": "^17.0.0",
+    "selenium-webdriver": "^4.50.0"
+  }
+}

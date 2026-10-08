@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Task Tracker</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; }
+    form { display: flex; gap: 8px; }
+    input { flex: 1; padding: 8px; }
+    li { display: flex; justify-content: space-between; padding: 6px 0; }
+    li span { cursor: pointer; }
+    li.done span { text-decoration: line-through; color: #888; }
+  </style>
+</head>
+<body>
+  <h1 id="heading">Task Tracker</h1>
+
+  <form id="task-form">
+    <input id="task-input" placeholder="New task" autocomplete="off">
+    <button id="add-btn" type="submit">Add</button>
+  </form>
+
+  <ul id="task-list"></ul>
+
+  <script>
+    const list = document.getElementById('task-list');
+
+    async function load() {
+      const tasks = await (await fetch('/api/tasks')).json();
+      list.innerHTML = '';
+      tasks.forEach(t => {
+        const li = document.createElement('li');
+        li.className = 'task' + (t.done ? ' done' : '');
+        li.innerHTML = '<span></span><button aria-label="delete">x</button>';
+        li.querySelector('span').textContent = t.title;
+        li.querySelector('span').onclick = async () => {
+          await fetch('/api/tasks/' + t.id, { method: 'PATCH' });
+          load();
+        };
+        li.querySelector('button').onclick = async () => {
+          await fetch('/api/tasks/' + t.id, { method: 'DELETE' });
+          load();
+        };
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('task-form').onsubmit = async e => {
+      e.preventDefault();
+      const input = document.getElementById('task-input');
+      await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: input.value })
+      });
+      input.value = '';
+      load();
+    };
+
+    load();
+  </script>
+</body>
+</html>
